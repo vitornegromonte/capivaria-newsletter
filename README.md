@@ -27,7 +27,7 @@ For more details, check ``requirements.txt``
 
 ## Contributors
 - Vitor Negromonte (vnco)
-- Maria Geizyani (mgss)
+- Maria Geyzianny (mgss)
 - Adna Farias (alfs2)
 - Julia Nunes (jnas2)
 - Talisson Mendes (tsms)
