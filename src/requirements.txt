@@ -1,0 +1,9 @@
+openai
+streamlit
+scikit-learn
+pandas
+numpy
+requests
+langchain
+tiktoken
+serpapi
