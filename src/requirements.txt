@@ -1,10 +1,10 @@
+requests
+numpy
+pandas
 openai
 streamlit
 scikit-learn
-pandas
-numpy
-requests
+newspaper3k
 langchain
 tiktoken
 serpapi
-newspaper3k
