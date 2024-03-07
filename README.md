@@ -21,7 +21,7 @@ streamlit run app.py
 - Back-end:
     - SerpAPI for Article Scraping
     - Scikit-learn for Data cleaning
-    - Langchain for summarization
+    - LangChain for summarization
 
 For more details, check ``requirements.txt``
 
@@ -50,5 +50,8 @@ For more details, check ``requirements.txt``
 ```
 
 ## To do:
-- Improve the prompt
-- Teste with others LLMs
+- Melhorar o prompt (obrigatório)
+- Disparo de emails (meio termo)
+- Adicionar um controle do viés do prompt (opcional)
+- Preparar a apresentação
+- Começar o relatório post-mortem
