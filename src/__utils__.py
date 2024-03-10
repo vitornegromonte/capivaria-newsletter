@@ -32,6 +32,8 @@ def duplicate_check(new_article, articles):
 
     # Otherwise, return True (unique)
     return True
+
+
 class Document:
     def __init__(self, title, text):
         self.title = title
@@ -41,31 +43,31 @@ class Document:
 # Class to summarize the news articles with the function summarize_text
 
 class SummarizeText:
-    def __init__(self, parsed_texts, api_key):
+    def __init__(self, parsed_texts, open_ai_api_key):
         self.parsed_texts = parsed_texts
-        self.api_key = api_key
-
-    def summarize_text(parsed_texts, api_key):
+        self.api_key = open_ai_api_key
+        
+    def summarize_text(parsed_texts, open_ai_api_key):
         
         summarized_texts_titles_urls = []
-        model = OpenAI(api_key, temperature = 0.3)
+        model = OpenAI(openai_api_key= open_ai_api_key, temperature=0.8)
         
         summarizer = load_summarize_chain(model, chain_type = 'map_reduce')
         
         # Define prompt that generates titles for summarized text
         prompt = PromptTemplate(
-                input_variables=["text"], 
-                template="Write an appropriate, clickbaity news article title in less than 70 characters for this text: {text}"
+                input_variables=["temperature","text"], 
+                template="Write an appropriate, neutral news article title in less than 70 characters for this text: {text}"
             )
         
         for splitted_text, url in parsed_texts:
         # Convert each text string to a Document object
-            to_summarize_text = [Document('Dummy Title', text) for text in to_summarize_text]
-            if not to_summarize_text:  # Check if list is empty before running the chain
+            parsed_texts = [Document('Dummy Title', text) for text in parsed_texts]
+            if not parsed_texts:  # Check if list is empty before running the chain
                 print(f"No text to summarize for URL: {url}")
-            continue
+                continue
         # Summarize chunks here
-            summarized_text = summarizer.run(to_summarize_text)
+            summarized_text = summarizer.run(parsed_texts)
 
             # prompt template that generates unique titles
             chain_prompt = LLMChain(llm=model, prompt=prompt)
@@ -77,60 +79,74 @@ class SummarizeText:
 
 
 # Class to Scrap the data from the Google
-class GoogleScrapper:
-    def __init__(self, api_key, news_count):
-        self.api_key = api_key
-        self.serp_api = serpapi.GoogleSearchResults(api_key)
-        self.news_count = news_count
+def get_data(query, api_key, news_count):        
+    params = {
+        "q": query,
+        "location": "Recife,State of Pernambuco,Brazil",
+        "hl": "pt-br",
+        "gl": "br",
+        "google_domain": "google.com",
+        "api_key": api_key
+    }
 
-    def get_data(self, query, api_key):        
-        params = {
-            "q": query,
-            "location": "Recife,State of Pernambuco,Brazil",
-            "hl": "pt-br",
-            "gl": "br",
-            "google_domain": "google.com",
-            "api_key": api_key
-        }
+    response = requests.get("https://serpapi.com/search", params)
+    results = json.loads(response.text)
     
-        response = requests.get("https://serpapi.com/search", params)
-        results = json.loads(response.text)
-        
-        excluded_websites = ["ft.com", "cointelegraph.com", "cell.com", "futuretools.io"]
-        
-        urls = [r["link"] for r in results["organic_results"] if not any(excluded_site in r["link"] for excluded_site in excluded_websites)][:self.news_count]
-        
-        parsed_texts = [] #list to store parsed text and corresponding URL
-        article_texts = []  # list to store original article texts for similarity comparison
-        
-        text_splitter = TokenTextSplitter(chunk_size=3000, chunk_overlap=200)
+    excluded_websites = ["ft.com", "cointelegraph.com", "cell.com", "futuretools.io"]
     
-        #iterate over each URL 
-        for url in urls:
-            try:
-                #create an article object
-                article = Article(url)
+    urls = [r["link"] for r in results["organic_results"] if not any(excluded_site in r["link"] for excluded_site in excluded_websites)][:news_count]
+    
+    parsed_texts = [] #list to store parsed text and corresponding URL
+    article_texts = []  # list to store original article texts for similarity comparison
+    
+    text_splitter = TokenTextSplitter(chunk_size=3000, chunk_overlap=200) 
 
-                #download the article 
-                article.download()
+    #iterate over each URL 
+    for url in urls:
+        try:
+            #create an article object
+            article = Article(url)
 
-                #parse the article 
-                article.parse()
+            #download the article 
+            article.download()
 
-                # Check if the new article is unique
-                if not duplicate_check(article.text, article_texts):
-                    continue  # If not unique, skip to the next article
+            #parse the article 
+            article.parse()
 
-                #split text into chunks of 4k tokens 
-                splitted_texts = text_splitter.split_text(article.text)
-                if not splitted_texts:
-                    print(article.text)
-                
-                #Append tuple of splitted text and URL to the list
-                parsed_texts.append((splitted_texts, url))
-                article_texts.append(article.text)  # Add the text of the new unique article to the list
+            # Check if the new article is unique
+            if not duplicate_check(article.text, article_texts):
+                continue  # If not unique, skip to the next article
 
-            except ArticleException: 
-                print(f"Failed to download and parse article: {url}")
+            #split text into chunks of 4k tokens 
+            splitted_texts = text_splitter.split_text(article.text)
+            if not splitted_texts:
+                print(article.text)
+            
+            #Append tuple of splitted text and URL to the list
+            parsed_texts.append((splitted_texts, url))
+            article_texts.append(article.text)  # Add the text of the new unique article to the list
 
-        return parsed_texts
+        except ArticleException: 
+            print(f"Failed to download and parse article: {url}")
+
+    return parsed_texts
+    
+def send_email(subject, 
+               body, 
+               mail_target, 
+               from_email, 
+               mailgun_domain, 
+               mailgun_api_key):
+    
+    response = requests.post(
+        f'https://api.mailgun.net/v3/{mailgun_domain}/messages',
+        auth=('api', mailgun_api_key),
+        data={'from': from_email,
+              'to': mail_target,
+              'subject': subject,
+              'text': body})
+    
+    print("Status code: ", response.status_code)
+    print("Response data: ", response.text)
+    
+    return response 
