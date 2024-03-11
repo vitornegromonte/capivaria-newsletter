@@ -44,10 +44,13 @@ if st.button('Submit'):
     
     splitted_text = st.session_state.get_splitted_text
     
+    debug_scrr = SummarizeText.summarize_text(splitted_text, openai_api_key)
+    st.session_state.summarized_texts = debug_scrr
+    print(debug_scrr)
     st.session_state.summarized_texts = SummarizeText.summarize_text(splitted_text, openai_api_key)
         
     for title, summarized_text, url in st.session_state.summarized_texts:
-        st.title(title)
+        st.title(title.replace('"', ''))
         # Add the emoji before the summarized text
         st.write(f"❇️ {summarized_text}")
         st.write(f"🔗 {url}")

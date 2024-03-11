@@ -35,6 +35,7 @@ def duplicate_check(new_article, articles):
 
 
 class Document:
+    
     def __init__(self, title, text):
         self.title = title
         self.page_content = text
@@ -99,7 +100,7 @@ def get_data(query, api_key, news_count):
     parsed_texts = [] #list to store parsed text and corresponding URL
     article_texts = []  # list to store original article texts for similarity comparison
     
-    text_splitter = TokenTextSplitter(chunk_size=3000, chunk_overlap=200) 
+    text_splitter = TokenTextSplitter(chunk_size=1000, chunk_overlap=10) 
 
     #iterate over each URL 
     for url in urls:
