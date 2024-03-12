@@ -5,6 +5,7 @@
 ## 🌱 About
 CapivarIA is a newsletter generator that uses AI to summarize news articles. It is built using Python and leverages natural language processing techniques to extract key information from news articles and generate concise summaries. The project aims to provide a convenient way for users to stay updated with the latest news without having to read lengthy articles.
 
+<!-- 
 ## 🔎 How to use
 
 ```
@@ -14,6 +15,8 @@ pip install -r requirements.txt
 cd src
 streamlit run app.py
 ```
+--> 
+
 ## 🛠️ Tech stack
 
 - Front-end: 

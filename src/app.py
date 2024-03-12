@@ -1,5 +1,5 @@
 import streamlit as st
-from __utils__ import get_data, SummarizeText, send_email
+from __utils__ import get_data, SummarizeText
 
 with st.sidebar:
     st.title('CapivarIA')
