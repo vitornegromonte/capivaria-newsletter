@@ -131,40 +131,21 @@ def summarize_text(to_summarize_texts, openai_api_key):
 
     return summarized_texts_titles_urls
 
-def send_email_mailgun(subject, body, to, from_email, mailgun_domain, mailgun_api_key):
-    response = requests.post(
-        f"https://api.mailgun.net/v3/{mailgun_domain}/messages",
-        auth=("api", mailgun_api_key),
-        data={"from": from_email,
-              "to": to,
-              "subject": subject,
-              "text": body})
-    
-    #in case of an error, what's the status
-    print("Status code:", response.status_code)
-    print("Response data:", response.text)
-    
-    return response
-
 def main():
     #frontend
-    st.title('AutoNewsletter')
-    st.markdown("## Please input your API keys")
-
-    #create text input field for API keys 
-    serpapi_key = st.text_input("Insert your SerpAPI key here: ", type="password")
-    openai_api_key = st.text_input("Insert your OpenAI api key: ", type="password")
+    st.title('CapivarIA')
+    st.markdown("## # Please input your API keys")
 
     #create text input field for keyword 
     user_query = st.text_input("Make me a newsletter about: ")
     
-    #you'll have to create a Mailgun account and if it's a free one you'll have to make a receiving mail as an authorized recipient 
-    st.markdown("## Info necessary for the MailGun to work") 
-
-    recipient_mail = st.text_input("Email To: ")
-    sending_mail = st.text_input("Email from: ") #email you used to create a MailGun account
-    mailgun_domain = st.text_input("Enter your mailgun Domain here: ")
-    mailgun_api = st.text_input("Enter your mailgun API key here: ")
+    col1, col2 = st.columns(2)
+    
+    #create text input field for API keys 
+    with col1:
+        serpapi_key = st.text_input("Insert your SerpAPI key here: ", type="password")
+    with col2:
+        openai_api_key = st.text_input("Insert your OpenAI api key: ", type="password")
 
     if st.button('Submit'):
         st.session_state.serpapi_key = serpapi_key
@@ -189,17 +170,6 @@ def main():
           email_body += f"❇️{title}\n\n"
           email_body += f"💬{summarized_text}\n\n"
           email_body += f"🔗{url}\n\n"
-
-        # Send the email
-        send_email_mailgun(
-            subject="🤖🤯 This week news about AI", #you can change "AI" to accept the user query variable instead of hardcoded word, but I prefer it like this 
-                                                   #because my keywords sometimes get weird and long
-            body=email_body, 
-            to=recipient_mail, 
-            from_email=sending_mail, 
-            mailgun_domain=mailgun_domain, 
-            mailgun_api_key=mailgun_api
-        )
 
     return openai_api_key
 
