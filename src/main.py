@@ -134,7 +134,7 @@ def summarize_text(to_summarize_texts, openai_api_key):
 def main():
     #frontend
     st.title('CapivarIA')
-    st.markdown("## # Please input your API keys")
+    st.markdown("### Please input your API keys")
 
     #create text input field for keyword 
     user_query = st.text_input("Make me a newsletter about: ")
