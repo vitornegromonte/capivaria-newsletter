@@ -9,7 +9,7 @@ CapivarIA is a newsletter generator that uses AI to summarize news articles. It 
 
 1. Clone this repository to your machine using `https://github.com/vitornegromonte/newsletter`
 2. Install dependencies using `pip install -r requirements.txt`
-3. Run the Streamlit application using `streamlit run app.py`
+3. Run the Streamlit application using `streamlit run streamlit_app.py`
 4. In the application, the user must choose a topic that interests them.
 5. Enter the keys of the requested APIs - SerpAPI and OpenAI.
 6. The application will generate articles related to the chosen topic, showing the title and a brief description.
