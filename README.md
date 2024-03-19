@@ -1,6 +1,6 @@
 # capivarIA newsletter
 
-[![website](https://img.shields.io/badge/Check_the_website-0D1117?style=for-the-badge&logo=Streamlit&logoColor=FF4B4B)](https://geraianews.streamlit.app/)
+[![website](https://img.shields.io/badge/Check_the_website-0D1117?style=for-the-badge&logo=Streamlit&logoColor=FF4B4B)](https://capivaria.streamlit.app/)
 
 ## 🌱 About
 CapivarIA is a newsletter generator that uses AI to summarize news articles. It is built using Python and leverages natural language processing techniques to extract key information from news articles and generate concise summaries. The project aims to provide a convenient way for users to stay updated with the latest news without having to read lengthy articles.
